@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 
+// Centralized Backend API Base URL (Supports Vite Environment Variable VITE_API_BASE_URL for easy hosting deployment)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
 
@@ -55,7 +58,7 @@ function LoginInterface() {
 
   // Fetch Live Domains from MySQL
   const fetchDomains = () => {
-    fetch('http://127.0.0.1:8000/api/domains')
+    fetch(`${API_BASE_URL}/api/domains`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok' && data.domains && data.domains.length > 0) {
@@ -98,7 +101,7 @@ function LoginInterface() {
 
     try {
       if (authMode === 'signin') {
-        const res = await fetch('http://127.0.0.1:8000/api/login', {
+        const res = await fetch(`${API_BASE_URL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -120,7 +123,7 @@ function LoginInterface() {
           has_done_thesis: hasDoneThesis === 'true',
           domain_name: finalDomainName
         }
-        const res = await fetch('http://127.0.0.1:8000/api/register/student', {
+        const res = await fetch(`${API_BASE_URL}/api/register/student`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -149,7 +152,7 @@ function LoginInterface() {
           calendar_link: calendarLink,
           domain_name: finalDomainName
         }
-        const res = await fetch('http://127.0.0.1:8000/api/register/faculty', {
+        const res = await fetch(`${API_BASE_URL}/api/register/faculty`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -621,18 +624,18 @@ function DatabaseInspector() {
   const [viewMode, setViewMode] = useState('tabular')
 
   const fetchBackendData = () => {
-    fetch('http://127.0.0.1:8000/')
+    fetch(`${API_BASE_URL}/`)
       .then((res) => res.json())
       .then((data) => setApiMessage(data.message))
       .catch(() => setApiMessage('Failed to connect to backend server'))
 
-    fetch('http://127.0.0.1:8000/health')
+    fetch(`${API_BASE_URL}/health`)
       .then((res) => res.json())
       .then((data) => setHealthStatus(data))
       .catch(() => setHealthStatus({ status: 'error', db_connection: 'Backend unavailable' }))
 
     setLoadingDb(true)
-    fetch('http://127.0.0.1:8000/api/tables')
+    fetch(`${API_BASE_URL}/api/tables`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
