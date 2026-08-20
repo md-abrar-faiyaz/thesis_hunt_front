@@ -77,7 +77,7 @@ export default function StudentRegisterForm({
               {dom}
             </option>
           ))}
-          <option value="__CUSTOM__">➕ Add / Type New Custom Domain</option>
+          <option value="__CUSTOM__">Add / Type New Custom Domain</option>
         </select>
 
         {selectedDomain === '__CUSTOM__' && (

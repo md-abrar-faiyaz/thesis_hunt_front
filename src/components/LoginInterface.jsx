@@ -219,7 +219,7 @@ export default function LoginInterface() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              🎓 Student
+              Student
             </button>
             <button
               type="button"
@@ -230,7 +230,7 @@ export default function LoginInterface() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              👨‍🏫 Faculty
+              Faculty
             </button>
           </div>
         )}
