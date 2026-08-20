@@ -11,11 +11,8 @@ function App() {
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
 
-<<<<<<< HEAD
-  // If path starts with /db, render Database Inspector GUI
-=======
+
   // Render Database Inspector GUI if path starts with /db
->>>>>>> 73ba843 (Refactor frontend into modular components)
   if (currentPath.startsWith('/db')) {
     return <DatabaseInspector />
   }
