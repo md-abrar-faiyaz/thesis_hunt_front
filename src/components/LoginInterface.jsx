@@ -3,7 +3,7 @@ import { API_BASE_URL } from '../config'
 import StudentRegisterForm from './forms/StudentRegisterForm'
 import FacultyRegisterForm from './forms/FacultyRegisterForm'
 
-export default function LoginInterface() {
+export default function LoginInterface({ onLoginSuccess }) {
   const [authMode, setAuthMode] = useState('signin') // 'signin' or 'register'
   const [registerRole, setRegisterRole] = useState('student') // 'student' or 'faculty'
   const [statusMsg, setStatusMsg] = useState({ type: '', text: '' })
@@ -23,6 +23,7 @@ export default function LoginInterface() {
   // Student Fields
   const [cgpa, setCgpa] = useState('')
   const [creditsCompleted, setCreditsCompleted] = useState('')
+  const [semNo, setSemNo] = useState('1')
   const [hasDoneThesis, setHasDoneThesis] = useState('false')
 
   // Faculty Fields
@@ -87,6 +88,10 @@ export default function LoginInterface() {
         const data = await res.json()
         if (data.status === 'ok') {
           setStatusMsg({ type: 'success', text: `Welcome back, ${data.user.name}! Role: ${data.user.role}` })
+          setPassword('')
+          if (onLoginSuccess) {
+            onLoginSuccess(data.user)
+          }
         } else {
           setStatusMsg({ type: 'error', text: data.message || 'Login failed.' })
         }
@@ -98,6 +103,7 @@ export default function LoginInterface() {
           gender,
           cgpa: parseFloat(cgpa) || 0.0,
           credits_completed: parseInt(creditsCompleted) || 0,
+          sem_no: parseInt(semNo) || 1,
           has_done_thesis: hasDoneThesis === 'true',
           domain_name: finalDomainName
         }
@@ -319,6 +325,8 @@ export default function LoginInterface() {
               customDomain={customDomain}
               setCustomDomain={setCustomDomain}
               domainsList={domainsList}
+              semNo={semNo}
+              setSemNo={setSemNo}
             />
           )}
 

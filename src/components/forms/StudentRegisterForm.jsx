@@ -11,11 +11,13 @@ export default function StudentRegisterForm({
   setSelectedDomain,
   customDomain,
   setCustomDomain,
-  domainsList
+  domainsList,
+  semNo,
+  setSemNo
 }) {
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
             CGPA
@@ -42,6 +44,22 @@ export default function StudentRegisterForm({
             value={creditsCompleted}
             onChange={(e) => setCreditsCompleted(e.target.value)}
             placeholder="112"
+            required
+            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            Semester No.
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="20"
+            value={semNo}
+            onChange={(e) => setSemNo(e.target.value)}
+            placeholder="7"
             required
             className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
           />
