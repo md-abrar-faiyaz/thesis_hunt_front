@@ -27,7 +27,7 @@ export default function FacultyRegisterForm({
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Faculty Initial
           </label>
           <input
@@ -36,18 +36,18 @@ export default function FacultyRegisterForm({
             onChange={(e) => setFacInitial(e.target.value)}
             placeholder="MDF"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Designation / Rank
           </label>
           <select
             value={rank}
             onChange={(e) => setRank(e.target.value)}
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           >
             <option value="Professor">Professor</option>
             <option value="Associate Professor">Associate Professor</option>
@@ -60,13 +60,13 @@ export default function FacultyRegisterForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             UG / PG Focus
           </label>
           <select
             value={ugPg}
             onChange={(e) => setUgPg(e.target.value)}
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           >
             <option value="Undergraduate">Undergraduate (UG)</option>
             <option value="Postgraduate">Postgraduate (PG)</option>
@@ -75,7 +75,7 @@ export default function FacultyRegisterForm({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Semester Free From
           </label>
           <input
@@ -83,14 +83,14 @@ export default function FacultyRegisterForm({
             value={semFreeFrom}
             onChange={(e) => setSemFreeFrom(e.target.value)}
             placeholder="Fall 2026"
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Max Groups / Sem
           </label>
           <input
@@ -99,12 +99,12 @@ export default function FacultyRegisterForm({
             onChange={(e) => setMaxGrpPerSem(e.target.value)}
             placeholder="4"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Total Supervised
           </label>
           <input
@@ -113,14 +113,14 @@ export default function FacultyRegisterForm({
             onChange={(e) => setTotalSupervised(e.target.value)}
             placeholder="0"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Room Number
           </label>
           <input
@@ -128,12 +128,12 @@ export default function FacultyRegisterForm({
             value={roomNo}
             onChange={(e) => setRoomNo(e.target.value)}
             placeholder="UB70102"
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Calendar Link
           </label>
           <input
@@ -141,20 +141,20 @@ export default function FacultyRegisterForm({
             value={calendarLink}
             onChange={(e) => setCalendarLink(e.target.value)}
             placeholder="https://calendar.google.com/..."
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
       </div>
 
       {/* Research Domain */}
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
           Research Domain (Work On Domain)
         </label>
         <select
           value={selectedDomain}
           onChange={(e) => setSelectedDomain(e.target.value)}
-          className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 transition-all mb-2"
+          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all mb-2"
         >
           {domainsList.map((dom) => (
             <option key={dom} value={dom}>
@@ -171,10 +171,11 @@ export default function FacultyRegisterForm({
             onChange={(e) => setCustomDomain(e.target.value)}
             placeholder="Enter custom research domain name"
             required
-            className="w-full px-4 py-2.5 bg-slate-950 border border-cyan-500/60 rounded-xl text-cyan-300 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            className="w-full px-4 py-2.5 bg-sky-50 border border-sky-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:ring-1 focus:ring-blue-900"
           />
         )}
       </div>
     </>
   )
 }
+

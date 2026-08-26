@@ -158,17 +158,18 @@ export default function LoginInterface({ onLoginSuccess }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 py-12">
-      {/* Background glow */}
-      <div className="absolute w-[30rem] h-[30rem] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 py-12 relative overflow-hidden">
+      {/* Background subtle pastel blue glow */}
+      <div className="absolute w-[32rem] h-[32rem] bg-sky-100/60 rounded-full blur-3xl pointer-events-none -top-20 -left-20"></div>
+      <div className="absolute w-[28rem] h-[28rem] bg-sky-50/80 rounded-full blur-3xl pointer-events-none -bottom-20 -right-20"></div>
 
-      <div className="relative bg-slate-900 p-8 sm:p-10 rounded-3xl shadow-2xl max-w-xl w-full border border-slate-800 backdrop-blur-md">
+      <div className="relative bg-white p-8 sm:p-10 rounded-3xl shadow-xl max-w-xl w-full border border-slate-200">
         {/* Title & Headline */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">
+          <h1 className="text-4xl font-extrabold text-blue-950 mb-2 tracking-tight">
             Thesis Hunt
           </h1>
-          <p className="text-slate-400 text-sm">Academic Research & Thesis Repository</p>
+          <p className="text-black text-sm font-medium">Academic Research & Thesis Repository</p>
         </div>
 
         {/* Alert notification banner */}
@@ -176,26 +177,26 @@ export default function LoginInterface({ onLoginSuccess }) {
           <div
             className={`mb-6 p-4 rounded-xl text-xs font-semibold flex items-center justify-between border ${
               statusMsg.type === 'success'
-                ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300'
-                : 'bg-rose-950/80 border-rose-500/50 text-rose-300'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                : 'bg-rose-50 border-rose-200 text-rose-900'
             }`}
           >
             <span>{statusMsg.text}</span>
-            <button type="button" onClick={() => setStatusMsg({ type: '', text: '' })} className="ml-2 text-slate-400 hover:text-slate-200">
+            <button type="button" onClick={() => setStatusMsg({ type: '', text: '' })} className="ml-2 text-black hover:text-rose-900">
               ✕
             </button>
           </div>
         )}
 
         {/* Auth mode tab switch */}
-        <div className="flex bg-slate-950 p-1 rounded-2xl border border-slate-800 mb-6">
+        <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 mb-6 shadow-xs">
           <button
             type="button"
             onClick={() => setAuthMode('signin')}
             className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
               authMode === 'signin'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-900 text-white shadow-sm'
+                : 'text-black hover:text-blue-900'
             }`}
           >
             Sign In
@@ -205,8 +206,8 @@ export default function LoginInterface({ onLoginSuccess }) {
             onClick={() => setAuthMode('register')}
             className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
               authMode === 'register'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-900 text-white shadow-sm'
+                : 'text-black hover:text-blue-900'
             }`}
           >
             Register
@@ -215,14 +216,14 @@ export default function LoginInterface({ onLoginSuccess }) {
 
         {/* Role toggle button group */}
         {authMode === 'register' && (
-          <div className="flex bg-slate-900 border border-cyan-500/30 p-1 rounded-xl mb-6">
+          <div className="flex bg-sky-50 border border-sky-200 p-1.5 rounded-xl mb-6">
             <button
               type="button"
               onClick={() => setRegisterRole('student')}
-              className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                 registerRole === 'student'
-                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-blue-950 border border-sky-300 shadow-sm'
+                  : 'text-black hover:text-blue-900'
               }`}
             >
               Student
@@ -230,10 +231,10 @@ export default function LoginInterface({ onLoginSuccess }) {
             <button
               type="button"
               onClick={() => setRegisterRole('faculty')}
-              className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                 registerRole === 'faculty'
-                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-blue-950 border border-sky-300 shadow-sm'
+                  : 'text-black hover:text-blue-900'
               }`}
             >
               Faculty
@@ -245,7 +246,7 @@ export default function LoginInterface({ onLoginSuccess }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {authMode === 'register' && (
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
                 Full Name
               </label>
               <input
@@ -254,13 +255,13 @@ export default function LoginInterface({ onLoginSuccess }) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Dr. Alan Turing / Jane Doe"
                 required
-                className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
               Email Address
             </label>
             <input
@@ -269,17 +270,17 @@ export default function LoginInterface({ onLoginSuccess }) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@university.edu"
               required
-              className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
             />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+              <label className="block text-xs font-bold uppercase tracking-wider text-black">
                 Password
               </label>
               {authMode === 'signin' && (
-                <a href="#" onClick={(e) => e.preventDefault()} className="text-xs text-cyan-400 hover:underline">
+                <a href="#" onClick={(e) => e.preventDefault()} className="text-xs text-blue-900 font-semibold hover:underline">
                   Forgot?
                 </a>
               )}
@@ -290,19 +291,19 @@ export default function LoginInterface({ onLoginSuccess }) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
             />
           </div>
 
           {authMode === 'register' && (
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
                 Gender
               </label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -359,7 +360,7 @@ export default function LoginInterface({ onLoginSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-6 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-cyan-500/20 transform transition-all active:scale-[0.99] text-sm mt-4 disabled:opacity-50"
+            className="w-full py-3.5 px-6 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl shadow-md transition-all active:scale-[0.99] text-sm mt-4 disabled:opacity-50"
           >
             {loading
               ? 'Processing...'
@@ -369,14 +370,14 @@ export default function LoginInterface({ onLoginSuccess }) {
           </button>
         </form>
 
-        <div className="mt-6 pt-5 border-t border-slate-800 text-center text-xs text-slate-500">
+        <div className="mt-6 pt-5 border-t border-slate-200 text-center text-xs text-black font-medium">
           {authMode === 'signin' ? (
             <>
               Don't have an account?{' '}
               <button
                 type="button"
                 onClick={() => setAuthMode('register')}
-                className="text-cyan-400 font-semibold hover:underline"
+                className="text-blue-900 font-bold hover:underline"
               >
                 Register Now
               </button>
@@ -387,7 +388,7 @@ export default function LoginInterface({ onLoginSuccess }) {
               <button
                 type="button"
                 onClick={() => setAuthMode('signin')}
-                className="text-cyan-400 font-semibold hover:underline"
+                className="text-blue-900 font-bold hover:underline"
               >
                 Sign In
               </button>

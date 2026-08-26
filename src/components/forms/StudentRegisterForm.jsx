@@ -19,7 +19,7 @@ export default function StudentRegisterForm({
     <>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             CGPA
           </label>
           <input
@@ -31,12 +31,12 @@ export default function StudentRegisterForm({
             onChange={(e) => setCgpa(e.target.value)}
             placeholder="3.85"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Credits Completed
           </label>
           <input
@@ -45,12 +45,12 @@ export default function StudentRegisterForm({
             onChange={(e) => setCreditsCompleted(e.target.value)}
             placeholder="112"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
             Semester No.
           </label>
           <input
@@ -61,19 +61,19 @@ export default function StudentRegisterForm({
             onChange={(e) => setSemNo(e.target.value)}
             placeholder="7"
             required
-            className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
           Has Completed Thesis Previously?
         </label>
         <select
           value={hasDoneThesis}
           onChange={(e) => setHasDoneThesis(e.target.value)}
-          className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 transition-all"
+          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
         >
           <option value="false">No (First Thesis)</option>
           <option value="true">Yes</option>
@@ -82,13 +82,13 @@ export default function StudentRegisterForm({
 
       {/* Preferred Research Domain */}
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+        <label className="block text-xs font-bold uppercase tracking-wider text-black mb-1.5">
           Preferred Research Domain
         </label>
         <select
           value={selectedDomain}
           onChange={(e) => setSelectedDomain(e.target.value)}
-          className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-700/60 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-cyan-500 transition-all mb-2"
+          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all mb-2"
         >
           {domainsList.map((dom) => (
             <option key={dom} value={dom}>
@@ -105,10 +105,11 @@ export default function StudentRegisterForm({
             onChange={(e) => setCustomDomain(e.target.value)}
             placeholder="Enter your custom domain name (e.g. Quantum Computing)"
             required
-            className="w-full px-4 py-2.5 bg-slate-950 border border-cyan-500/60 rounded-xl text-cyan-300 placeholder-slate-500 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            className="w-full px-4 py-2.5 bg-sky-50 border border-sky-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:ring-1 focus:ring-blue-900"
           />
         )}
       </div>
     </>
   )
 }
+

@@ -45,33 +45,33 @@ export default function DatabaseInspector() {
   const columns = currentRows.length > 0 ? Object.keys(currentRows[0]) : []
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col p-6 max-w-6xl mx-auto">
+    <div className="min-h-screen bg-white text-black flex flex-col p-6 max-w-6xl mx-auto">
       {/* Header */}
-      <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 mb-8 border-b border-slate-800">
+      <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 mb-8 border-b border-slate-200">
         <div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+          <h1 className="text-4xl font-extrabold text-blue-950">
             Thesis Hunt
           </h1>
-          <p className="text-slate-400 text-sm mt-1">Academic Database Explorer & API Portal</p>
+          <p className="text-black text-sm mt-1 font-medium">Academic Database Explorer & API Portal</p>
         </div>
 
         {/* Status Indicators */}
         <div className="flex items-center gap-3">
-          <div className="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50 flex items-center gap-2">
+          <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 shadow-xs">
             <span className={`h-2.5 w-2.5 rounded-full ${apiMessage.includes('Welcome') ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-            <span className="text-xs text-slate-300 font-medium">{apiMessage}</span>
+            <span className="text-xs text-black font-semibold">{apiMessage}</span>
           </div>
 
-          <div className="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50 flex items-center gap-2">
+          <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 shadow-xs">
             <span className={`h-2.5 w-2.5 rounded-full ${healthStatus?.status === 'ok' ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-            <span className="text-xs text-slate-300 font-medium">
+            <span className="text-xs text-black font-semibold">
               {healthStatus ? `DB: ${healthStatus.db_connection}` : 'Checking DB...'}
             </span>
           </div>
 
           <button
             onClick={fetchBackendData}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-cyan-400 transition-colors"
+            className="px-3.5 py-2 bg-blue-900 hover:bg-blue-950 border border-blue-900 rounded-xl text-xs font-bold text-white transition-colors shadow-xs"
           >
             Refresh
           </button>
@@ -80,30 +80,30 @@ export default function DatabaseInspector() {
 
       {/* Database Inspector View */}
       <main className="flex-1 flex flex-col gap-6">
-        <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700/50 shadow-xl">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-slate-100">Database Inspector</h2>
-              <p className="text-xs text-slate-400">View real-time records directly fetched from MySQL database</p>
+              <h2 className="text-xl font-extrabold text-black">Database Inspector</h2>
+              <p className="text-xs text-black font-medium">View real-time records directly fetched from MySQL database</p>
             </div>
 
-            <div className="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-700/50">
+            <div className="flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-xs">
               <button
                 onClick={() => setViewMode('tabular')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'tabular'
-                    ? 'bg-cyan-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-blue-900 text-white shadow-xs'
+                    : 'text-black hover:text-blue-900'
                 }`}
               >
                 Tabular View
               </button>
               <button
                 onClick={() => setViewMode('json')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'json'
-                    ? 'bg-cyan-500 text-slate-950 shadow-md'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-blue-900 text-white shadow-xs'
+                    : 'text-black hover:text-blue-900'
                 }`}
               >
                 JSON View
@@ -112,56 +112,56 @@ export default function DatabaseInspector() {
           </div>
 
           {loadingDb ? (
-            <div className="py-12 text-center text-slate-400 animate-pulse">
+            <div className="py-12 text-center text-black animate-pulse font-medium">
               Loading database tables...
             </div>
           ) : tableNames.length === 0 ? (
-            <div className="py-12 text-center bg-slate-900/40 rounded-xl border border-slate-700/30">
-              <p className="text-slate-300 font-medium">No database tables found or database connection pending.</p>
-              <p className="text-xs text-slate-500 mt-1">Make sure your Aiven database credentials are configured in <code className="text-cyan-400">backend/.env</code></p>
+            <div className="py-12 text-center bg-white rounded-xl border border-slate-200">
+              <p className="text-black font-bold">No database tables found or database connection pending.</p>
+              <p className="text-xs text-slate-600 mt-1">Make sure your database credentials are configured in <code className="text-blue-900 font-mono">backend/.env</code></p>
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap gap-2 mb-6 border-b border-slate-700/50 pb-4">
+              <div className="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-4">
                 {tableNames.map((tableName) => (
                   <button
                     key={tableName}
                     onClick={() => setSelectedTable(tableName)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                       selectedTable === tableName
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-cyan-500/20'
-                        : 'bg-slate-900/60 text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 border border-slate-700/40'
+                        ? 'bg-blue-900 text-white shadow-xs'
+                        : 'bg-white text-black hover:bg-sky-50 hover:border-sky-300 border border-slate-200'
                     }`}
                   >
-                    {tableName} <span className="ml-1.5 px-2 py-0.5 bg-slate-950/40 rounded-full text-[10px] text-cyan-300">{dbData[tableName]?.length || 0}</span>
+                    {tableName} <span className={`ml-1.5 px-2 py-0.5 rounded-full text-[10px] ${selectedTable === tableName ? 'bg-blue-950 text-sky-200' : 'bg-sky-100 text-blue-950 border border-sky-200'}`}>{dbData[tableName]?.length || 0}</span>
                   </button>
                 ))}
               </div>
 
               {viewMode === 'tabular' ? (
-                <div className="overflow-x-auto rounded-xl border border-slate-700/50 bg-slate-900/60">
+                <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
                   {currentRows.length === 0 ? (
-                    <div className="p-8 text-center text-slate-400 text-sm">
-                      Table <span className="font-semibold text-cyan-400">"{selectedTable}"</span> is empty.
+                    <div className="p-8 text-center text-black font-medium text-sm">
+                      Table <span className="font-bold text-blue-950">"{selectedTable}"</span> is empty.
                     </div>
                   ) : (
-                    <table className="w-full text-left text-xs text-slate-300">
-                      <thead className="bg-slate-800/80 text-cyan-400 uppercase font-mono border-b border-slate-700/50">
+                    <table className="w-full text-left text-xs text-black">
+                      <thead className="bg-sky-50 text-blue-950 uppercase font-mono border-b border-slate-200">
                         <tr>
                           {columns.map((col) => (
-                            <th key={col} className="px-4 py-3 font-semibold">
+                            <th key={col} className="px-4 py-3 font-bold">
                               {col}
                             </th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800">
+                      <tbody className="divide-y divide-slate-100">
                         {currentRows.map((row, idx) => (
-                          <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
+                          <tr key={idx} className="hover:bg-sky-50/40 transition-colors">
                             {columns.map((col) => (
                               <td key={col} className="px-4 py-3 whitespace-nowrap">
                                 {row[col] === null ? (
-                                  <span className="text-slate-600 italic">null</span>
+                                  <span className="text-slate-400 italic">null</span>
                                 ) : (
                                   String(row[col])
                                 )}
@@ -174,7 +174,7 @@ export default function DatabaseInspector() {
                   )}
                 </div>
               ) : (
-                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto">
+                <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 overflow-x-auto">
                   <pre className="text-xs font-mono text-cyan-300 leading-relaxed">
                     {JSON.stringify(selectedTable ? { [selectedTable]: currentRows } : dbData, null, 2)}
                   </pre>
@@ -187,3 +187,4 @@ export default function DatabaseInspector() {
     </div>
   )
 }
+
