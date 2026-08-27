@@ -45,18 +45,18 @@ export default function DatabaseInspector() {
   const columns = currentRows.length > 0 ? Object.keys(currentRows[0]) : []
 
   return (
-    <div className="min-h-screen bg-white text-black flex flex-col p-6 max-w-6xl mx-auto">
+    <div className="min-h-screen bg-white text-black flex flex-col p-4 sm:p-6 max-w-6xl mx-auto w-full">
       {/* Header */}
       <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 mb-8 border-b border-slate-200">
-        <div>
-          <h1 className="text-4xl font-extrabold text-blue-950">
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-950">
             Thesis Hunt
           </h1>
           <p className="text-black text-sm mt-1 font-medium">Academic Database Explorer & API Portal</p>
         </div>
 
         {/* Status Indicators */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-3">
           <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 shadow-xs">
             <span className={`h-2.5 w-2.5 rounded-full ${apiMessage.includes('Welcome') ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
             <span className="text-xs text-black font-semibold">{apiMessage}</span>

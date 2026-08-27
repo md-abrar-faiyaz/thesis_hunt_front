@@ -46,7 +46,7 @@ export default function StudentProfileSection({ user }) {
   if (!profile) return null
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="max-w-5xl mx-auto w-full space-y-6">
       {/* Student Profile Banner */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
