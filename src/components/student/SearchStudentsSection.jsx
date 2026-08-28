@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { API_BASE_URL } from '../../config'
 
-export default function SearchStudentsSection({ initialQuery = '' }) {
+export default function SearchStudentsSection({ initialQuery = '', onNavigateToInbox }) {
   const [searchQuery, setSearchQuery] = useState(initialQuery)
 
   const [hasCompletedThesis, setHasCompletedThesis] = useState(false)
@@ -420,6 +420,24 @@ export default function SearchStudentsSection({ initialQuery = '' }) {
                   </span>
                 </div>
               </div>
+
+              {/* Send Message Button */}
+              {onNavigateToInbox && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateToInbox({
+                    partner_id: student.student_id,
+                    partner_name: student.name,
+                    partner_role: 'Student'
+                  })}
+                  className="w-full mt-2 py-2.5 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center justify-center space-x-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span>Send Message</span>
+                </button>
+              )}
             </div>
           ))}
         </div>

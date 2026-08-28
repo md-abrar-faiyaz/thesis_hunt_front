@@ -5,7 +5,14 @@ import DatabaseInspector from './components/DatabaseInspector'
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
-  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('thesis_user')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
 
   useEffect(() => {
     const handleLocationChange = () => setCurrentPath(window.location.pathname)
@@ -13,8 +20,18 @@ function App() {
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
 
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user)
+    try {
+      localStorage.setItem('thesis_user', JSON.stringify(user))
+    } catch {}
+  }
+
   const handleLogout = () => {
     setCurrentUser(null)
+    try {
+      localStorage.removeItem('thesis_user')
+    } catch {}
     window.history.pushState({}, '', '/')
   }
 
@@ -29,7 +46,7 @@ function App() {
   }
 
   // Default path (/): Render Login and Registration interface
-  return <LoginInterface onLoginSuccess={(user) => setCurrentUser(user)} />
+  return <LoginInterface onLoginSuccess={handleLoginSuccess} />
 }
 
 export default App

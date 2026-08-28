@@ -1,18 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import StudentProfileSection from './student/StudentProfileSection'
 import SearchStudentsSection from './student/SearchStudentsSection'
 import SearchFacultiesSection from './student/SearchFacultiesSection'
 import BlogpostsSection from './student/BlogpostsSection'
 import PublicationsSection from './student/PublicationsSection'
+import InboxSection from './student/InboxSection'
+import TasksSection from './student/TasksSection'
+import { API_BASE_URL } from '../config'
 
 export default function StudentInterface({ user, onLogout }) {
   const [activeTab, setActiveTab] = useState('profile')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [searchPreFill, setSearchPreFill] = useState({ targetTab: '', query: '', key: 0 })
+  const [inboxTarget, setInboxTarget] = useState(null)
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const fetchUnreadCount = () => {
+    if (!user || !user.uid) return
+    fetch(`${API_BASE_URL}/api/student/inbox/conversations?user_id=${user.uid}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          setUnreadCount(data.total_unread || 0)
+        }
+      })
+      .catch(() => {})
+  }
+
+  useEffect(() => {
+    fetchUnreadCount()
+    const timer = setInterval(fetchUnreadCount, 10000)
+    return () => clearInterval(timer)
+  }, [user])
 
   const handleNavigateToSearch = (tab, writerName) => {
     setSearchPreFill({ targetTab: tab, query: writerName, key: Date.now() })
     setActiveTab(tab)
+    setIsSidebarOpen(false)
+  }
+
+  const handleNavigateToInbox = (partner) => {
+    setInboxTarget(partner)
+    setActiveTab('inbox')
     setIsSidebarOpen(false)
   }
 
@@ -31,24 +61,28 @@ export default function StudentInterface({ user, onLogout }) {
   const renderActiveSection = () => {
     switch (activeTab) {
       case 'profile':
-        return <StudentProfileSection user={user} />
+        return <StudentProfileSection key={`profile-${refreshKey}`} user={user} />
+      case 'inbox':
+        return <InboxSection key={`inbox-${refreshKey}`} user={user} initialTargetPartner={inboxTarget} />
       case 'search_students':
         return (
           <SearchStudentsSection
-            key={`students-${searchPreFill.key}`}
+            key={`students-${searchPreFill.key}-${refreshKey}`}
             initialQuery={searchPreFill.targetTab === 'search_students' ? searchPreFill.query : ''}
+            onNavigateToInbox={handleNavigateToInbox}
           />
         )
       case 'search_faculties':
         return (
           <SearchFacultiesSection
-            key={`faculties-${searchPreFill.key}`}
+            key={`faculties-${searchPreFill.key}-${refreshKey}`}
             initialQuery={searchPreFill.targetTab === 'search_faculties' ? searchPreFill.query : ''}
           />
         )
       case 'blogposts':
         return (
           <BlogpostsSection
+            key={`blogposts-${refreshKey}`}
             user={user}
             onNavigateToSearch={handleNavigateToSearch}
           />
@@ -56,21 +90,21 @@ export default function StudentInterface({ user, onLogout }) {
       case 'publications':
         return (
           <PublicationsSection
+            key={`publications-${refreshKey}`}
             user={user}
             onNavigateToSearch={handleNavigateToSearch}
           />
         )
+      case 'tasks':
+        return <TasksSection key={`tasks-${refreshKey}`} user={user} />
       default:
-
-
-
         return (
           <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-3 shadow-sm">
             <h3 className="text-xl font-bold text-black">
-              {navItems.find((n) => n.id === activeTab)?.label || 'Inbox'}
+              {navItems.find((n) => n.id === activeTab)?.label || 'Section'}
             </h3>
             <p className="text-xs text-slate-600 max-w-md mx-auto">
-              This section is currently queued for implementation. Select <strong>Student Profile</strong>, <strong>Search Students</strong>, or <strong>Search Faculties</strong> to interact with completed features.
+              This section is currently queued for implementation. Select <strong>Student Profile</strong>, <strong>Search Students</strong>, or <strong>Inbox</strong> to interact with completed features.
             </p>
           </div>
         )
@@ -110,6 +144,21 @@ export default function StudentInterface({ user, onLogout }) {
 
         {/* Right Options */}
         <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Refresh Data Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setRefreshKey((prev) => prev + 1)
+              fetchUnreadCount()
+            }}
+            title="Refresh Page Data"
+            className="p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-sky-50 text-black transition-all shadow-xs flex items-center space-x-1"
+          >
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span className="hidden md:inline-block text-xs font-bold text-blue-950">Refresh</span>
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -117,7 +166,7 @@ export default function StudentInterface({ user, onLogout }) {
               setIsSidebarOpen(false)
             }}
             title="Inbox"
-            className={`p-2 sm:p-2.5 rounded-xl border transition-all ${
+            className={`p-2 sm:p-2.5 rounded-xl border transition-all relative ${
               activeTab === 'inbox'
                 ? 'bg-blue-900 text-white border-blue-900 shadow-sm'
                 : 'bg-white text-black hover:bg-sky-50 border-slate-200'
@@ -131,6 +180,11 @@ export default function StudentInterface({ user, onLogout }) {
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
           <button

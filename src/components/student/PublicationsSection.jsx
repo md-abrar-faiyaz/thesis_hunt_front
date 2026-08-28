@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { API_BASE_URL } from '../../config'
 
 export default function PublicationsSection({ user, onNavigateToSearch }) {
+  const [activeTab, setActiveTab] = useState('all') // 'all' | 'my'
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [publications, setPublications] = useState([])
@@ -37,6 +38,9 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
     if (selectedCategory && selectedCategory !== 'All') {
       params.append('category', selectedCategory)
     }
+    if (activeTab === 'my' && user && user.uid) {
+      params.append('author_id', user.uid)
+    }
 
     fetch(`${API_BASE_URL}/api/student/publications?${params.toString()}`)
       .then((res) => res.json())
@@ -53,7 +57,7 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
       .finally(() => {
         setLoading(false)
       })
-  }, [searchQuery, selectedCategory])
+  }, [searchQuery, selectedCategory, activeTab, user])
 
   const fetchDomains = () => {
     fetch(`${API_BASE_URL}/api/domains`)
@@ -228,20 +232,49 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
         </button>
       </div>
 
+      {/* Navigation Sub-Tabs: All Publications vs My Publications */}
+      <div className="flex items-center space-x-2 border-b border-slate-200 pb-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab('all')}
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all ${
+            activeTab === 'all'
+              ? 'bg-blue-900 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
+          }`}
+        >
+          All Publications
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('my')}
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center space-x-1.5 ${
+            activeTab === 'my'
+              ? 'bg-blue-900 text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
+          }`}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>My Publications</span>
+        </button>
+      </div>
+
       {/* Search & Journal Category Filter Panel */}
       <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Search Bar Input */}
           <div className="sm:col-span-2 space-y-1.5">
             <label className="block text-xs font-bold text-black uppercase tracking-wider">
-              Search Publications
+              {activeTab === 'my' ? 'Search My Publications' : 'Search Publications'}
             </label>
             <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by publication title or topic domain..."
+                placeholder={activeTab === 'my' ? "Search your published papers or domain..." : "Search by publication title or topic domain..."}
                 className="w-full bg-white border border-slate-300 rounded-2xl px-4 py-2.5 pl-11 text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all placeholder:text-slate-400"
               />
               <svg
@@ -300,18 +333,24 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
         </div>
       ) : publications.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-3 shadow-sm">
-          <p className="text-lg font-bold text-black">No Publications Found</p>
+          <p className="text-lg font-bold text-black">
+            {activeTab === 'my' ? 'No Publications Added Yet' : 'No Publications Found'}
+          </p>
           <p className="text-xs text-slate-600 font-medium max-w-md mx-auto">
-            {searchQuery || selectedCategory !== 'All'
-              ? 'No publication matched your search or category filter. Try clearing filters.'
-              : 'Be the first to add a research paper or publication!'}
+            {activeTab === 'my'
+              ? searchQuery || selectedCategory !== 'All'
+                ? 'No publication matching your search or category filter was found in your publications.'
+                : 'You have not added any published papers yet. Add your published work to showcase it on your profile!'
+              : searchQuery || selectedCategory !== 'All'
+                ? 'No publication matched your search or category filter. Try clearing filters.'
+                : 'Be the first to add a research paper or publication!'}
           </p>
           <button
             type="button"
             onClick={handleOpenAddModal}
             className="mt-3 px-4 py-2 bg-sky-100 hover:bg-sky-200 border border-sky-300 text-blue-950 rounded-xl text-xs font-bold transition-all"
           >
-            Add Publication Now
+            {activeTab === 'my' ? 'Add Publication Now' : 'Add Publication Now'}
           </button>
         </div>
       ) : (
