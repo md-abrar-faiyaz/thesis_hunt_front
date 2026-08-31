@@ -147,7 +147,7 @@ export default function TasksSection({ user }) {
             setModalError('')
             setIsModalOpen(true)
           }}
-          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0"
+          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
@@ -279,7 +279,7 @@ export default function TasksSection({ user }) {
                         type="button"
                         disabled={actionTaskId === task.task_id}
                         onClick={() => handleTaskAction(task.task_id, 'complete')}
-                        className="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                        className="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                       >
                         Mark as Completed
                       </button>
@@ -327,7 +327,7 @@ export default function TasksSection({ user }) {
                         type="button"
                         disabled={actionTaskId === task.task_id}
                         onClick={() => handleTaskAction(task.task_id, 'complete')}
-                        className="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50"
+                        className="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
                       >
                         Mark as Completed
                       </button>

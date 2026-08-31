@@ -145,7 +145,7 @@ export default function SearchFacultiesSection({ initialQuery = '' }) {
           </span>
           <h2 className="text-3xl font-extrabold text-black mt-2">Search Faculties</h2>
           <p className="text-sm text-black mt-1 font-medium">
-            Search, filter, and sort faculty supervisors across research domains and academic ranks.
+            Search, filter, and sort faculty supervisors.
           </p>
         </div>
 
@@ -169,7 +169,7 @@ export default function SearchFacultiesSection({ initialQuery = '' }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by faculty name, initial (e.g. MDF), research domain, or semester free from"
+              placeholder="Search by faculty name, initial, research domain, or semester free from"
               className="w-full bg-white border border-slate-300 rounded-2xl px-4 py-3 pl-11 text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all placeholder:text-slate-400"
             />
             <svg
@@ -378,7 +378,7 @@ export default function SearchFacultiesSection({ initialQuery = '' }) {
           <button
             type="button"
             onClick={handleResetFilters}
-            className="text-blue-900 hover:text-blue-950 font-bold underline underline-offset-2"
+            className="text-blue-900 hover:text-blue-950 font-bold underline underline-offset-2 cursor-pointer"
           >
             Reset All Filters & Sort
           </button>

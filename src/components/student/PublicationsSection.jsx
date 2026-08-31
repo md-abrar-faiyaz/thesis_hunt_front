@@ -223,7 +223,7 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
         <button
           type="button"
           onClick={handleOpenAddModal}
-          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0"
+          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
@@ -237,7 +237,7 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
         <button
           type="button"
           onClick={() => setActiveTab('all')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all ${
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
             activeTab === 'all'
               ? 'bg-blue-900 text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
@@ -248,7 +248,7 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
         <button
           type="button"
           onClick={() => setActiveTab('my')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center space-x-1.5 ${
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
             activeTab === 'my'
               ? 'bg-blue-900 text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
@@ -274,7 +274,7 @@ export default function PublicationsSection({ user, onNavigateToSearch }) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={activeTab === 'my' ? "Search your published papers or domain..." : "Search by publication title or topic domain..."}
+                placeholder={activeTab === 'my' ? "Search your published papers or domain" : "Search by publication title or topic domain"}
                 className="w-full bg-white border border-slate-300 rounded-2xl px-4 py-2.5 pl-11 text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all placeholder:text-slate-400"
               />
               <svg

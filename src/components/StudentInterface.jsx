@@ -6,6 +6,9 @@ import BlogpostsSection from './student/BlogpostsSection'
 import PublicationsSection from './student/PublicationsSection'
 import InboxSection from './student/InboxSection'
 import TasksSection from './student/TasksSection'
+import GroupChannelSection from './student/GroupChannelSection'
+import ThesisGroupSection from './student/ThesisGroupSection'
+import MeetingsSection from './student/MeetingsSection'
 import { API_BASE_URL } from '../config'
 
 export default function StudentInterface({ user, onLogout }) {
@@ -14,6 +17,11 @@ export default function StudentInterface({ user, onLogout }) {
   const [searchPreFill, setSearchPreFill] = useState({ targetTab: '', query: '', key: 0 })
   const [inboxTarget, setInboxTarget] = useState(null)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [requestCounts, setRequestCounts] = useState({
+    pending_tasks: 0,
+    incoming_meetings: 0,
+    pending_group_requests: 0
+  })
   const [refreshKey, setRefreshKey] = useState(0)
 
   const fetchUnreadCount = () => {
@@ -26,6 +34,26 @@ export default function StudentInterface({ user, onLogout }) {
         }
       })
       .catch(() => {})
+
+    fetch(`${API_BASE_URL}/api/student/request-counts/${user.uid}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 'ok') {
+          setRequestCounts({
+            pending_tasks: data.pending_tasks || 0,
+            incoming_meetings: data.incoming_meetings || 0,
+            pending_group_requests: data.pending_group_requests || 0
+          })
+        }
+      })
+      .catch(() => {})
+  }
+
+  const getItemBadgeCount = (itemId) => {
+    if (itemId === 'group_channel') return requestCounts.pending_group_requests
+    if (itemId === 'meetings') return requestCounts.incoming_meetings
+    if (itemId === 'tasks') return requestCounts.pending_tasks
+    return 0
   }
 
   useEffect(() => {
@@ -33,6 +61,7 @@ export default function StudentInterface({ user, onLogout }) {
     const timer = setInterval(fetchUnreadCount, 10000)
     return () => clearInterval(timer)
   }, [user])
+
 
   const handleNavigateToSearch = (tab, writerName) => {
     setSearchPreFill({ targetTab: tab, query: writerName, key: Date.now() })
@@ -48,8 +77,8 @@ export default function StudentInterface({ user, onLogout }) {
 
   const navItems = [
     { id: 'profile', label: 'Student Profile' },
-    { id: 'thesis_group', label: 'Thesis Group' },
-    { id: 'group_channel', label: 'Thesis Group Chat' },
+    { id: 'thesis_group', label: 'Available Thesis Groups' },
+    { id: 'group_channel', label: 'My Thesis Group' },
     { id: 'meetings', label: 'Meetings' },
     { id: 'search_students', label: 'Search Students' },
     { id: 'search_faculties', label: 'Search Faculties' },
@@ -64,12 +93,29 @@ export default function StudentInterface({ user, onLogout }) {
         return <StudentProfileSection key={`profile-${refreshKey}`} user={user} />
       case 'inbox':
         return <InboxSection key={`inbox-${refreshKey}`} user={user} initialTargetPartner={inboxTarget} />
+      case 'thesis_group':
+        return (
+          <ThesisGroupSection
+            key={`thesis-group-${refreshKey}`}
+            user={user}
+            onNavigateToGroupChannel={() => setActiveTab('group_channel')}
+          />
+        )
+      case 'group_channel':
+        return (
+          <GroupChannelSection
+            key={`group-${refreshKey}`}
+            user={user}
+            onNavigateToThesisGroups={() => setActiveTab('thesis_group')}
+          />
+        )
       case 'search_students':
         return (
           <SearchStudentsSection
             key={`students-${searchPreFill.key}-${refreshKey}`}
             initialQuery={searchPreFill.targetTab === 'search_students' ? searchPreFill.query : ''}
             onNavigateToInbox={handleNavigateToInbox}
+            user={user}
           />
         )
       case 'search_faculties':
@@ -97,6 +143,8 @@ export default function StudentInterface({ user, onLogout }) {
         )
       case 'tasks':
         return <TasksSection key={`tasks-${refreshKey}`} user={user} />
+      case 'meetings':
+        return <MeetingsSection key={`meetings-${refreshKey}`} user={user} />
       default:
         return (
           <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-3 shadow-sm">
@@ -166,11 +214,10 @@ export default function StudentInterface({ user, onLogout }) {
               setIsSidebarOpen(false)
             }}
             title="Inbox"
-            className={`p-2 sm:p-2.5 rounded-xl border transition-all relative ${
-              activeTab === 'inbox'
+            className={`p-2 sm:p-2.5 rounded-xl border transition-all relative ${activeTab === 'inbox'
                 ? 'bg-blue-900 text-white border-blue-900 shadow-sm'
                 : 'bg-white text-black hover:bg-sky-50 border-slate-200'
-            }`}
+              }`}
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -208,9 +255,8 @@ export default function StudentInterface({ user, onLogout }) {
 
         {/* Left Vertical Navigation Panel */}
         <aside
-          className={`fixed lg:sticky top-0 lg:top-[61px] left-0 h-full lg:h-[calc(100vh-61px)] z-50 lg:z-30 w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 transition-transform duration-200 ease-in-out ${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-          }`}
+          className={`fixed lg:sticky top-0 lg:top-[61px] left-0 h-full lg:h-[calc(100vh-61px)] z-50 lg:z-30 w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            }`}
         >
           {/* Close button inside mobile sidebar header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-100 lg:hidden">
@@ -229,6 +275,7 @@ export default function StudentInterface({ user, onLogout }) {
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const isActive = activeTab === item.id
+              const badgeCount = getItemBadgeCount(item.id)
               return (
                 <button
                   key={item.id}
@@ -237,13 +284,18 @@ export default function StudentInterface({ user, onLogout }) {
                     setActiveTab(item.id)
                     setIsSidebarOpen(false)
                   }}
-                  className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isActive
                       ? 'bg-sky-100 text-blue-950 border border-sky-200 shadow-xs'
                       : 'text-black hover:bg-sky-50 border border-transparent'
                   }`}
                 >
                   <span className="truncate">{item.label}</span>
+                  {badgeCount > 0 && (
+                    <span className="ml-2 bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full border border-white shrink-0">
+                      {badgeCount > 9 ? '9+' : badgeCount}
+                    </span>
+                  )}
                 </button>
               )
             })}

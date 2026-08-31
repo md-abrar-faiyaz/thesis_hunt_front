@@ -46,11 +46,13 @@ export default function InboxSection({ user, initialTargetPartner }) {
 
   // Fetch full conversation message history with selected partner
   const fetchMessages = useCallback(
-    (partnerId) => {
+    (partnerId, silent = false) => {
       if (!user || !user.uid || !partnerId) return
 
-      setMessagesLoading(true)
-      setMessagesError('')
+      if (!silent) {
+        setMessagesLoading(true)
+        setMessagesError('')
+      }
 
       fetch(`${API_BASE_URL}/api/student/inbox/messages?user_id=${user.uid}&partner_id=${partnerId}`)
         .then((res) => res.json())
@@ -61,14 +63,14 @@ export default function InboxSection({ user, initialTargetPartner }) {
               setSelectedPartner(data.partner)
             }
           } else {
-            setMessagesError(data.message || 'Failed to load conversation messages.')
+            if (!silent) setMessagesError(data.message || 'Failed to load conversation messages.')
           }
         })
         .catch(() => {
-          setMessagesError('Network error: Failed to connect to server.')
+          if (!silent) setMessagesError('Network error: Failed to connect to server.')
         })
         .finally(() => {
-          setMessagesLoading(false)
+          if (!silent) setMessagesLoading(false)
         })
     },
     [user]
@@ -113,9 +115,24 @@ export default function InboxSection({ user, initialTargetPartner }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
-    if (!newMessage.trim() || !user || !user.uid || !selectedPartner) return
+    const textToSend = newMessage.trim()
+    if (!textToSend || !user || !user.uid || !selectedPartner) return
 
-    setSending(true)
+    // Optimistic UI: append temporary message immediately
+    const tempId = 'temp_' + Date.now()
+    const tempMsg = {
+      temp_id: tempId,
+      sender_id: user.uid,
+      receiver_id: selectedPartner.partner_id,
+      message_text: textToSend,
+      status: 'Unread',
+      isSending: true,
+      formatted_time: null
+    }
+
+    setMessages((prev) => [...prev, tempMsg])
+    setNewMessage('')
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/student/inbox/send`, {
         method: 'POST',
@@ -123,21 +140,20 @@ export default function InboxSection({ user, initialTargetPartner }) {
         body: JSON.stringify({
           sender_id: user.uid,
           receiver_id: selectedPartner.partner_id,
-          message_text: newMessage.trim()
+          message_text: textToSend
         })
       })
 
       const data = await res.json()
       if (data.status === 'ok') {
-        setNewMessage('')
-        fetchMessages(selectedPartner.partner_id)
+        fetchMessages(selectedPartner.partner_id, true)
       } else {
         alert(data.message || 'Failed to send message.')
+        setMessages((prev) => prev.filter((m) => m.temp_id !== tempId))
       }
     } catch (err) {
       alert('Network error: Failed to connect to server.')
-    } finally {
-      setSending(false)
+      setMessages((prev) => prev.filter((m) => m.temp_id !== tempId))
     }
   }
 
@@ -163,6 +179,33 @@ export default function InboxSection({ user, initialTargetPartner }) {
       }
     } catch (err) {
       alert('Network error: Failed to delete message.')
+    }
+  }
+
+  const handleInviteResponse = async (msg, groupId, action) => {
+    if (!user || !user.uid || !selectedPartner) return
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/student/group-channel/invitation-response`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.uid,
+          sender_id: msg.sender_id,
+          group_id: groupId,
+          action: action,
+          timestamp: msg.timestamp
+        })
+      })
+
+      const data = await res.json()
+      if (data.status === 'ok') {
+        fetchMessages(selectedPartner.partner_id)
+      } else {
+        alert(data.message || 'Failed to process invitation response.')
+      }
+    } catch (err) {
+      alert('Network error: Failed to respond to invitation.')
     }
   }
 
@@ -321,10 +364,90 @@ export default function InboxSection({ user, initialTargetPartner }) {
             ) : (
               messages.map((msg, index) => {
                 const isMe = msg.sender_id === user.uid
+                const isGroupInvite = msg.message_text.startsWith('[Group Invitation:')
                 const isNotification =
-                  msg.message_text.startsWith('[Notification]') ||
-                  msg.message_text.startsWith('[Task Notification]') ||
-                  msg.message_text.includes('Task')
+                  !isGroupInvite &&
+                  (msg.message_text.startsWith('[Notification]') ||
+                    msg.message_text.startsWith('[Task Notification]') ||
+                    msg.message_text.includes('Task'))
+
+                if (isGroupInvite) {
+                  // Parse group ID from [Group Invitation:group_id]
+                  const match = msg.message_text.match(/^\[Group Invitation:(\d+)\]\s*(.*)$/)
+                  const groupId = match ? parseInt(match[1], 10) : null
+                  const cleanText = match ? match[2] : msg.message_text
+
+                  const isAccepted = msg.message_text.includes('[ACCEPTED]')
+                  const isRejected = msg.message_text.includes('[REJECTED]')
+                  const isAnswered = isAccepted || isRejected
+
+                  return (
+                    <div
+                      key={index}
+                      className="max-w-xl mx-auto my-3 bg-sky-50 border border-sky-200 rounded-2xl p-5 shadow-sm space-y-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2.5 bg-sky-100 rounded-xl text-blue-950 shrink-0">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-950 bg-sky-200/70 px-2 py-0.5 rounded-md">
+                                Thesis Group Invitation
+                              </span>
+                              {isAccepted && (
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-950 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md">
+                                  Accepted ✓
+                                </span>
+                              )}
+                              {isRejected && (
+                                <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-950 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-md">
+                                  Rejected ✕
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-black font-extrabold leading-relaxed mt-1">
+                              {cleanText.replace(/\s*\[ACCEPTED\]/, '').replace(/\s*\[REJECTED\]/, '')}
+                            </p>
+                            <p className="text-[10px] text-slate-600 font-medium">{msg.formatted_time}</p>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteMessage(msg)}
+                          title="Delete message"
+                          className="text-slate-400 hover:text-rose-800 p-1 rounded-lg hover:bg-sky-100 transition-colors shrink-0"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Action Buttons: Accept / Reject (only shown to recipient when pending) */}
+                      {!isMe && !isAnswered && groupId && (
+                        <div className="flex items-center space-x-3 pt-2 border-t border-sky-100">
+                          <button
+                            type="button"
+                            onClick={() => handleInviteResponse(msg, groupId, 'accept')}
+                            className="flex-1 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            Accept Invitation
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInviteResponse(msg, groupId, 'reject')}
+                            className="flex-1 py-2 bg-white hover:bg-rose-50 border border-rose-200 text-rose-900 font-extrabold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            Reject Invitation
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
+                }
 
                 if (isNotification) {
                   return (
@@ -367,9 +490,14 @@ export default function InboxSection({ user, initialTargetPartner }) {
 
                 return (
                   <div
-                    key={index}
+                    key={msg.temp_id || index}
                     className={`flex items-end space-x-2 ${isMe ? 'justify-end' : 'justify-start'}`}
                   >
+                    {/* Small Loading Icon on Left of Sent Message Bubble when Sending */}
+                    {isMe && msg.isSending && (
+                      <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-blue-900 mb-2.5 shrink-0"></div>
+                    )}
+
                     <div
                       className={`max-w-md rounded-2xl p-4 shadow-xs relative group ${
                         isMe
@@ -382,27 +510,31 @@ export default function InboxSection({ user, initialTargetPartner }) {
                           <p className="text-xs font-semibold leading-relaxed whitespace-pre-line">
                             {msg.message_text}
                           </p>
-                          <p
-                            className={`text-[10px] font-medium ${
-                              isMe ? 'text-blue-200' : 'text-slate-700'
-                            }`}
-                          >
-                            {msg.formatted_time}
-                          </p>
+                          {msg.formatted_time && !msg.isSending && (
+                            <p
+                              className={`text-[10px] font-medium ${
+                                isMe ? 'text-blue-200' : 'text-slate-700'
+                              }`}
+                            >
+                              {msg.formatted_time}
+                            </p>
+                          )}
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteMessage(msg)}
-                          title="Delete message"
-                          className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 text-xs rounded ${
-                            isMe
-                              ? 'text-blue-300 hover:text-white hover:bg-blue-800'
-                              : 'text-slate-400 hover:text-rose-800 hover:bg-slate-100'
-                          }`}
-                        >
-                          ✕
-                        </button>
+                        {!msg.isSending && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteMessage(msg)}
+                            title="Delete message"
+                            className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 text-xs rounded ${
+                              isMe
+                                ? 'text-blue-300 hover:text-white hover:bg-blue-800'
+                                : 'text-slate-400 hover:text-rose-800 hover:bg-slate-100'
+                            }`}
+                          >
+                            ✕
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -424,10 +556,10 @@ export default function InboxSection({ user, initialTargetPartner }) {
             />
             <button
               type="submit"
-              disabled={sending || !newMessage.trim()}
+              disabled={!newMessage.trim()}
               className="px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md disabled:opacity-50 shrink-0"
             >
-              {sending ? 'Sending...' : 'Send'}
+              Send
             </button>
           </form>
         </div>

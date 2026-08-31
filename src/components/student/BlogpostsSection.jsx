@@ -9,6 +9,11 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // 2-Week Window & Pagination State
+  const [weeksLimit, setWeeksLimit] = useState(2)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
   // Create Post Modal State
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newTitle, setNewTitle] = useState('')
@@ -28,8 +33,12 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
   const [editFormMsg, setEditFormMsg] = useState({ type: '', text: '' })
   const [editSubmitting, setEditSubmitting] = useState(false)
 
-  const fetchPosts = useCallback(() => {
-    setLoading(true)
+  const fetchPosts = useCallback((targetWeeks = weeksLimit, isLoadMore = false) => {
+    if (isLoadMore) {
+      setLoadingMore(true)
+    } else {
+      setLoading(true)
+    }
     setError('')
 
     const params = new URLSearchParams()
@@ -41,11 +50,14 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
       params.append('author_id', user.uid)
     }
 
+    params.append('weeks', targetWeeks)
+
     fetch(`${API_BASE_URL}/api/student/blogposts?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
           setPosts(data.posts || [])
+          setHasMore(!!data.has_more)
         } else {
           setError(data.message || 'Failed to load blog posts.')
         }
@@ -55,8 +67,9 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
       })
       .finally(() => {
         setLoading(false)
+        setLoadingMore(false)
       })
-  }, [searchQuery, activeTab, user])
+  }, [searchQuery, activeTab, user, weeksLimit])
 
   const fetchDomains = () => {
     fetch(`${API_BASE_URL}/api/domains`)
@@ -84,12 +97,22 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
       })
   }
 
+  const handleShowMore = () => {
+    const nextWeeks = weeksLimit + 2
+    setWeeksLimit(nextWeeks)
+    fetchPosts(nextWeeks, true)
+  }
+
+  useEffect(() => {
+    setWeeksLimit(2)
+  }, [activeTab, searchQuery])
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchPosts()
+      fetchPosts(weeksLimit)
     }, 250)
     return () => clearTimeout(timer)
-  }, [fetchPosts])
+  }, [fetchPosts, weeksLimit])
 
   useEffect(() => {
     fetchDomains()
@@ -228,7 +251,7 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0"
+          className="px-5 py-3 bg-blue-900 hover:bg-blue-950 text-white rounded-2xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
@@ -242,22 +265,20 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
         <button
           type="button"
           onClick={() => setActiveTab('all')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all ${
-            activeTab === 'all'
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${activeTab === 'all'
               ? 'bg-blue-900 text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
-          }`}
+            }`}
         >
           All Blogposts
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('my')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all flex items-center space-x-1.5 ${
-            activeTab === 'my'
+          className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer flex items-center space-x-1.5 ${activeTab === 'my'
               ? 'bg-blue-900 text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-black border border-slate-200'
-          }`}
+            }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -276,7 +297,7 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={activeTab === 'my' ? "Search your blogposts by title or topic..." : "Search posts by title, writer name, or topic domain..."}
+            placeholder={activeTab === 'my' ? "Search your blogposts by title or domain" : "Search posts by title, writer name, or topic domain"}
             className="w-full bg-white border border-slate-300 rounded-2xl px-4 py-3 pl-11 text-black text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all placeholder:text-slate-400"
           />
           <svg
@@ -415,6 +436,26 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
               </article>
             )
           })}
+
+          {hasMore && (
+            <div className="pt-4 text-center">
+              <button
+                type="button"
+                onClick={handleShowMore}
+                disabled={loadingMore}
+                className="px-6 py-3 bg-white hover:bg-slate-100 border border-slate-300 text-blue-950 font-extrabold text-xs rounded-2xl shadow-xs transition-all cursor-pointer disabled:opacity-50 inline-flex items-center justify-center space-x-2"
+              >
+                {loadingMore ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-blue-900"></div>
+                    <span>Loading Older Posts...</span>
+                  </>
+                ) : (
+                  <span>Show More (Previous 2 Weeks)</span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -440,11 +481,10 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
 
             {formMsg.text && (
               <div
-                className={`p-3.5 rounded-xl text-xs font-semibold ${
-                  formMsg.type === 'success'
+                className={`p-3.5 rounded-xl text-xs font-semibold ${formMsg.type === 'success'
                     ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
                     : 'bg-rose-50 border border-rose-200 text-rose-900'
-                }`}
+                  }`}
               >
                 {formMsg.text}
               </div>
@@ -551,11 +591,10 @@ export default function BlogpostsSection({ user, onNavigateToSearch }) {
 
             {editFormMsg.text && (
               <div
-                className={`p-3.5 rounded-xl text-xs font-semibold ${
-                  editFormMsg.type === 'success'
+                className={`p-3.5 rounded-xl text-xs font-semibold ${editFormMsg.type === 'success'
                     ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
                     : 'bg-rose-50 border border-rose-200 text-rose-900'
-                }`}
+                  }`}
               >
                 {editFormMsg.text}
               </div>
