@@ -151,7 +151,7 @@ export default function LoginInterface({ onLoginSuccess }) {
         }
       }
     } catch (err) {
-      setStatusMsg({ type: 'error', text: 'Failed to connect to backend server.' })
+      setStatusMsg({ type: 'error', text: `Failed to connect to backend server at ${API_BASE_URL}. Please ensure backend server is running.` })
     } finally {
       setLoading(false)
     }
