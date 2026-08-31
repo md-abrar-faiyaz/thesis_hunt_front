@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { API_BASE_URL } from '../config'
+import { API_BASE_URL, apiFetch } from '../config'
 
 export default function DatabaseInspector() {
   const [apiMessage, setApiMessage] = useState('Connecting to backend...')
@@ -10,18 +10,18 @@ export default function DatabaseInspector() {
   const [viewMode, setViewMode] = useState('tabular')
 
   const fetchBackendData = () => {
-    fetch(`${API_BASE_URL}/`)
+    apiFetch('/')
       .then((res) => res.json())
-      .then((data) => setApiMessage(data.message))
+      .then((data) => setApiMessage(data.message || 'Connected'))
       .catch(() => setApiMessage('Failed to connect to backend server'))
 
-    fetch(`${API_BASE_URL}/health`)
+    apiFetch('/health')
       .then((res) => res.json())
       .then((data) => setHealthStatus(data))
       .catch(() => setHealthStatus({ status: 'error', db_connection: 'Backend unavailable' }))
 
     setLoadingDb(true)
-    fetch(`${API_BASE_URL}/api/tables`)
+    apiFetch('/api/tables')
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
