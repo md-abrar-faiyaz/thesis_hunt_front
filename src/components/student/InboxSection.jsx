@@ -21,11 +21,13 @@ export default function InboxSection({ user, initialTargetPartner }) {
   }
 
   // Fetch list of conversation cards
-  const fetchConversations = useCallback(() => {
+  const fetchConversations = useCallback((silent = false) => {
     if (!user || !user.uid) return
 
-    setLoading(true)
-    setError('')
+    if (!silent) {
+      setLoading(true)
+      setError('')
+    }
 
     fetch(`${API_BASE_URL}/api/student/inbox/conversations?user_id=${user.uid}`)
       .then((res) => res.json())
@@ -33,14 +35,14 @@ export default function InboxSection({ user, initialTargetPartner }) {
         if (data.status === 'ok') {
           setConversations(data.conversations || [])
         } else {
-          setError(data.message || 'Failed to load inbox conversations.')
+          if (!silent) setError(data.message || 'Failed to load inbox conversations.')
         }
       })
       .catch(() => {
-        setError('Network error: Unable to connect to backend server.')
+        if (!silent) setError('Network error: Unable to connect to backend server.')
       })
       .finally(() => {
-        setLoading(false)
+        if (!silent) setLoading(false)
       })
   }, [user])
 
@@ -78,7 +80,14 @@ export default function InboxSection({ user, initialTargetPartner }) {
 
   useEffect(() => {
     fetchConversations()
-  }, [fetchConversations])
+    const timer = setInterval(() => {
+      fetchConversations(true)
+      if (selectedPartner && selectedPartner.partner_id) {
+        fetchMessages(selectedPartner.partner_id, true)
+      }
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [fetchConversations, fetchMessages, selectedPartner])
 
   useEffect(() => {
     if (initialTargetPartner && initialTargetPartner.partner_id) {
