@@ -3,6 +3,7 @@ import LoginInterface from './components/LoginInterface'
 import StudentInterface from './components/StudentInterface'
 import ThesisDoneStudentInterface from './components/ThesisDoneStudentInterface'
 import DatabaseInspector from './components/DatabaseInspector'
+import { API_BASE_URL } from './config'
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -20,6 +21,27 @@ function App() {
     window.addEventListener('popstate', handleLocationChange)
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
+
+  // Auto-sync has_done_thesis for existing logged in sessions if missing
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'Student' && currentUser.has_done_thesis === undefined && currentUser.uid) {
+      fetch(`${API_BASE_URL}/api/student/profile/${currentUser.uid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === 'ok' && data.student) {
+            const updatedUser = {
+              ...currentUser,
+              has_done_thesis: Boolean(data.student.has_done_thesis)
+            }
+            setCurrentUser(updatedUser)
+            try {
+              localStorage.setItem('thesis_user', JSON.stringify(updatedUser))
+            } catch {}
+          }
+        })
+        .catch(() => {})
+    }
+  }, [currentUser])
 
   const handleLoginSuccess = (user) => {
     setCurrentUser(user)
