@@ -90,7 +90,16 @@ export default function LoginInterface({ onLoginSuccess }) {
           setStatusMsg({ type: 'success', text: `Welcome back, ${data.user.name}! Role: ${data.user.role}` })
           setPassword('')
           if (onLoginSuccess) {
-            onLoginSuccess(data.user)
+            const userObj = {
+              ...data.user,
+              has_done_thesis: Boolean(
+                data.user.has_done_thesis === true ||
+                data.user.has_done_thesis === 1 ||
+                data.user.has_done_thesis === 'true' ||
+                data.user.has_done_thesis === '1'
+              )
+            }
+            onLoginSuccess(userObj)
           }
         } else {
           setStatusMsg({ type: 'error', text: data.message || 'Login failed.' })
