@@ -119,14 +119,14 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden p-2 rounded-xl border border-slate-200 text-black hover:bg-emerald-50 transition-colors"
+            className="lg:hidden p-2 rounded-xl border border-slate-200 text-black hover:bg-sky-50 transition-colors"
             aria-label="Toggle navigation menu"
           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-lg sm:text-xl font-black text-blue-950 tracking-wider bg-emerald-100 px-2.5 sm:px-3 py-1 rounded-xl border border-emerald-200 shrink-0">
+          <span className="text-lg sm:text-xl font-black text-blue-950 tracking-wider bg-sky-100 px-2.5 sm:px-3 py-1 rounded-xl border border-sky-200 shrink-0">
             BRACU
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
           <h1 className="text-lg sm:text-2xl font-extrabold text-blue-950 leading-tight truncate">
             Thesis Hunt
           </h1>
-          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-950 border border-emerald-200 shrink-0">
+          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-blue-900 border border-sky-200 shrink-0">
             Thesis Completed Portal
           </span>
         </div>
@@ -151,7 +151,7 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
               fetchUnreadCount()
             }}
             title="Refresh Page Data"
-            className="p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 text-black transition-all shadow-xs flex items-center space-x-1"
+            className="p-2 sm:p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-sky-50 text-black transition-all shadow-xs flex items-center space-x-1"
           >
             <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -239,8 +239,8 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-100 text-emerald-950 border border-emerald-200 shadow-xs'
-                      : 'text-black hover:bg-emerald-50 border border-transparent'
+                      ? 'bg-sky-100 text-blue-950 border border-sky-200 shadow-xs'
+                      : 'text-black hover:bg-sky-50 border border-transparent'
                   }`}
                 >
                   <span className="truncate">{item.label}</span>
@@ -257,8 +257,8 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
           {/* User Info Footer at bottom of sidebar */}
           <div className="p-4 border-t border-slate-200 bg-white">
             <div className="flex items-center space-x-1.5 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span className="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-sky-500"></span>
+              <span className="text-[10px] font-extrabold text-blue-800 uppercase tracking-wider">
                 Thesis Completed
               </span>
             </div>
