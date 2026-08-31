@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import LoginInterface from './components/LoginInterface'
 import StudentInterface from './components/StudentInterface'
+import ThesisDoneStudentInterface from './components/ThesisDoneStudentInterface'
 import DatabaseInspector from './components/DatabaseInspector'
 
 function App() {
@@ -40,8 +41,11 @@ function App() {
     return <DatabaseInspector />
   }
 
-  // If logged in as Student, render StudentInterface
+  // If logged in as Student, render appropriate interface based on has_done_thesis status
   if (currentUser && currentUser.role === 'Student') {
+    if (currentUser.has_done_thesis) {
+      return <ThesisDoneStudentInterface user={currentUser} onLogout={handleLogout} />
+    }
     return <StudentInterface user={currentUser} onLogout={handleLogout} />
   }
 
