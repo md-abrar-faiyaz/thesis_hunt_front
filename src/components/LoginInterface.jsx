@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { API_BASE_URL, apiFetch } from '../config'
+import { API_BASE_URL } from '../config'
 import StudentRegisterForm from './forms/StudentRegisterForm'
 import FacultyRegisterForm from './forms/FacultyRegisterForm'
 
@@ -38,7 +38,7 @@ export default function LoginInterface({ onLoginSuccess }) {
 
   // Fetch Live Domains from MySQL database
   const fetchDomains = () => {
-    apiFetch('/api/domains')
+    fetch(`${API_BASE_URL}/api/domains`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok' && data.domains && data.domains.length > 0) {
@@ -80,7 +80,7 @@ export default function LoginInterface({ onLoginSuccess }) {
 
     try {
       if (authMode === 'signin') {
-        const res = await apiFetch('/api/login', {
+        const res = await fetch(`${API_BASE_URL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -116,7 +116,7 @@ export default function LoginInterface({ onLoginSuccess }) {
           has_done_thesis: hasDoneThesis === 'true',
           domain_name: finalDomainName
         }
-        const res = await apiFetch('/api/register/student', {
+        const res = await fetch(`${API_BASE_URL}/api/register/student`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -145,7 +145,7 @@ export default function LoginInterface({ onLoginSuccess }) {
           calendar_link: calendarLink,
           domain_name: finalDomainName
         }
-        const res = await apiFetch('/api/register/faculty', {
+        const res = await fetch(`${API_BASE_URL}/api/register/faculty`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -160,7 +160,7 @@ export default function LoginInterface({ onLoginSuccess }) {
         }
       }
     } catch (err) {
-      setStatusMsg({ type: 'error', text: `Failed to connect to backend server. Please ensure internet access or backend is running.` })
+      setStatusMsg({ type: 'error', text: 'Failed to connect to backend server. Please ensure backend server is running.' })
     } finally {
       setLoading(false)
     }

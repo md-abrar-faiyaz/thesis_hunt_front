@@ -3,7 +3,7 @@ import LoginInterface from './components/LoginInterface'
 import StudentInterface from './components/StudentInterface'
 import ThesisDoneStudentInterface from './components/ThesisDoneStudentInterface'
 import DatabaseInspector from './components/DatabaseInspector'
-import { API_BASE_URL, apiFetch } from './config'
+import { API_BASE_URL } from './config'
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
@@ -22,10 +22,10 @@ function App() {
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
 
-  // Auto-sync has_done_thesis for student sessions with MySQL database via apiFetch failover
+  // Auto-sync has_done_thesis for student sessions with MySQL database
   useEffect(() => {
     if (currentUser && currentUser.role === 'Student' && currentUser.uid) {
-      apiFetch(`/api/student/profile/${currentUser.uid}`)
+      fetch(`${API_BASE_URL}/api/student/profile/${currentUser.uid}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.status === 'ok' && data.student) {
