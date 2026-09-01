@@ -11,7 +11,16 @@ function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('thesis_user')
-      return saved ? JSON.parse(saved) : null
+      if (!saved) return null
+      const parsed = JSON.parse(saved)
+      if (!parsed) return null
+      const userId = parsed.uid || parsed.UID || parsed.faculty_id || parsed.student_id
+      const userRole = (parsed.role || '').toString().trim()
+      return {
+        ...parsed,
+        uid: userId,
+        role: userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1).toLowerCase() : parsed.role
+      }
     } catch {
       return null
     }
@@ -25,7 +34,8 @@ function App() {
 
   // Auto-sync has_done_thesis for student sessions with MySQL database
   useEffect(() => {
-    if (currentUser && currentUser.role === 'Student' && currentUser.uid) {
+    const userRole = (currentUser?.role || '').toString().trim().toLowerCase()
+    if (currentUser && userRole === 'student' && currentUser.uid) {
       fetch(`${API_BASE_URL}/api/student/profile/${currentUser.uid}`)
         .then((res) => res.json())
         .then((data) => {
@@ -47,12 +57,26 @@ function App() {
         })
         .catch(() => {})
     }
-  }, [currentUser?.uid])
+  }, [currentUser?.uid, currentUser?.role])
 
   const handleLoginSuccess = (user) => {
-    setCurrentUser(user)
+    if (!user) return
+    const userId = user.uid || user.UID || user.faculty_id || user.student_id
+    const userRole = (user.role || '').toString().trim()
+    const normalizedUser = {
+      ...user,
+      uid: userId,
+      role: userRole ? userRole.charAt(0).toUpperCase() + userRole.slice(1).toLowerCase() : user.role,
+      has_done_thesis: Boolean(
+        user.has_done_thesis === true ||
+        user.has_done_thesis === 1 ||
+        user.has_done_thesis === 'true' ||
+        user.has_done_thesis === '1'
+      )
+    }
+    setCurrentUser(normalizedUser)
     try {
-      localStorage.setItem('thesis_user', JSON.stringify(user))
+      localStorage.setItem('thesis_user', JSON.stringify(normalizedUser))
     } catch {}
   }
 
@@ -69,7 +93,7 @@ function App() {
     return <DatabaseInspector />
   }
 
-  // Determine if current student user has completed thesis (handles bool, int 1/0, and string "true"/"1")
+  // Determine if current student user has completed thesis
   const isThesisDone = Boolean(
     currentUser?.has_done_thesis === true ||
     currentUser?.has_done_thesis === 1 ||
@@ -77,8 +101,10 @@ function App() {
     currentUser?.has_done_thesis === '1'
   )
 
+  const activeRole = (currentUser?.role || '').toString().trim().toLowerCase()
+
   // If logged in as Student, render appropriate interface based on has_done_thesis status
-  if (currentUser && currentUser.role === 'Student') {
+  if (currentUser && activeRole === 'student') {
     if (isThesisDone) {
       return <ThesisDoneStudentInterface user={currentUser} onLogout={handleLogout} />
     }
@@ -86,7 +112,7 @@ function App() {
   }
 
   // If logged in as Faculty, render Faculty Interface
-  if (currentUser && currentUser.role === 'Faculty') {
+  if (currentUser && activeRole === 'faculty') {
     return <FacultyInterface user={currentUser} onLogout={handleLogout} />
   }
 
