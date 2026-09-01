@@ -20,9 +20,11 @@ export default function FacultyInboxSection({ user }) {
   const [inspectGroupModal, setInspectGroupModal] = useState(null)
 
   const fetchInbox = () => {
-    if (!user || !user.uid) return
+    if (!user) return
+    const userId = user.uid || user.UID || user.faculty_id
+    if (!userId) return
     setLoading(true)
-    fetch(`${API_BASE_URL}/api/faculty/inbox/${user.uid}`)
+    fetch(`${API_BASE_URL}/api/faculty/inbox/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {

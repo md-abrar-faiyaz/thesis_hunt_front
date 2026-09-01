@@ -18,9 +18,11 @@ export default function FacultyProfileSection({ user }) {
   const [domainName, setDomainName] = useState('')
 
   const fetchProfile = () => {
-    if (!user || !user.uid) return
+    if (!user) return
+    const userId = user.uid || user.UID || user.faculty_id
+    if (!userId) return
     setLoading(true)
-    fetch(`${API_BASE_URL}/api/faculty/profile/${user.uid}`)
+    fetch(`${API_BASE_URL}/api/faculty/profile/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok' && data.faculty) {
@@ -46,9 +48,9 @@ export default function FacultyProfileSection({ user }) {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
-    setSaveStatus('Saving changes...')
+    const userId = user?.uid || user?.UID || user?.faculty_id
     try {
-      const res = await fetch(`${API_BASE_URL}/api/faculty/profile/${user.uid}`, {
+      const res = await fetch(`${API_BASE_URL}/api/faculty/profile/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

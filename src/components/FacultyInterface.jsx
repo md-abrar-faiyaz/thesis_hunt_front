@@ -16,16 +16,19 @@ export default function FacultyInterface({ user, onLogout }) {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const fetchInboxBadge = () => {
-    if (!user || !user.uid) return
-    fetch(`${API_BASE_URL}/api/faculty/inbox/${user.uid}`)
+    if (!user) return
+    const userId = user.uid || user.UID || user.faculty_id
+    if (!userId) return
+
+    fetch(`${API_BASE_URL}/api/faculty/inbox/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
           const pendingSup = (data.supervisor_requests || []).filter(
-            (r) => !r.status || r.status.toLowerCase() === 'pending'
+            (r) => !r.status || String(r.status || '').toLowerCase() === 'pending'
           ).length
           const pendingMtg = (data.meeting_requests || []).filter(
-            (m) => !m.approve_stat || m.approve_stat.toLowerCase() === 'pending'
+            (m) => !m.approve_stat || String(m.approve_stat || '').toLowerCase() === 'pending'
           ).length
           setInboxBadgeCount(pendingSup + pendingMtg)
         }
