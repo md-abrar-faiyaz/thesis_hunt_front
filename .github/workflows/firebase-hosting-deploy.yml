@@ -19,6 +19,12 @@ jobs:
 
       - name: Build Vite App
         run: npm run build
+        env:
+          # Inject the production backend URL at build time.
+          # .env.production is gitignored, so it never reaches the CI runner.
+          # Add VITE_API_BASE_URL to your GitHub repo secrets:
+          # Settings → Secrets and variables → Actions → New repository secret
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
