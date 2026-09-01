@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import LoginInterface from './components/LoginInterface'
 import StudentInterface from './components/StudentInterface'
 import ThesisDoneStudentInterface from './components/ThesisDoneStudentInterface'
+import FacultyInterface from './components/FacultyInterface'
 import DatabaseInspector from './components/DatabaseInspector'
 import { API_BASE_URL } from './config'
 
@@ -84,8 +85,14 @@ function App() {
     return <StudentInterface user={currentUser} onLogout={handleLogout} />
   }
 
+  // If logged in as Faculty, render Faculty Interface
+  if (currentUser && currentUser.role === 'Faculty') {
+    return <FacultyInterface user={currentUser} onLogout={handleLogout} />
+  }
+
   // Default path (/): Render Login and Registration interface
   return <LoginInterface onLoginSuccess={handleLoginSuccess} />
 }
+
 
 export default App

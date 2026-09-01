@@ -1,2 +1,2 @@
-// Centralized API base URL supporting deployment overrides via VITE_API_BASE_URL env variable
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const defaultHost = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost'
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `http://${defaultHost}:8000`

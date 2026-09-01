@@ -8,6 +8,7 @@ export default function LoginInterface({ onLoginSuccess }) {
   const [registerRole, setRegisterRole] = useState('student') // 'student' or 'faculty'
   const [statusMsg, setStatusMsg] = useState({ type: '', text: '' })
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   // Common User Fields
   const [name, setName] = useState('')
@@ -137,6 +138,7 @@ export default function LoginInterface({ onLoginSuccess }) {
           gender,
           fac_initial: facInitial,
           rank,
+          designation: rank,
           ug_pg: ugPg,
           sem_free_from: semFreeFrom,
           max_grp_per_sem: parseInt(maxGrpPerSem) || 3,
@@ -294,14 +296,23 @@ export default function LoginInterface({ onLoginSuccess }) {
                 </a>
               )}
             </div>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full px-4 py-2.5 pr-14 bg-white border border-slate-300 rounded-xl text-black placeholder-slate-400 text-sm focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-xs font-extrabold text-blue-900 hover:text-blue-950 focus:outline-none select-none cursor-pointer"
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
 
           {authMode === 'register' && (

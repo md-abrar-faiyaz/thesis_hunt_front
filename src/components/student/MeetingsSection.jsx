@@ -384,9 +384,6 @@ export default function MeetingsSection({ user }) {
                     <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
                     <div>
                       <h3 className="text-lg font-black text-black">Group Approved Meetings</h3>
-                      <p className="text-[11px] text-slate-500 font-medium">
-                        Showing upcoming approved meetings scheduled within the next 2 weeks.
-                      </p>
                     </div>
                     <span className="text-xs font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full">
                       {activeApprovedMeetings.length}
