@@ -20,11 +20,13 @@ export default function FacultyMeetingsSection({ user }) {
   const [booking, setBooking] = useState(false)
 
   const fetchMeetingsData = () => {
-    if (!user || !user.uid) return
+    if (!user) return
+    const userId = user.uid || user.UID || user.faculty_id
+    if (!userId) return
     setLoading(true)
 
     // Fetch faculty meetings
-    fetch(`${API_BASE_URL}/api/faculty/meetings/${user.uid}`)
+    fetch(`${API_BASE_URL}/api/faculty/meetings/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
@@ -37,7 +39,7 @@ export default function FacultyMeetingsSection({ user }) {
       .finally(() => setLoading(false))
 
     // Fetch faculty supervised groups for booking selection dropdown
-    fetch(`${API_BASE_URL}/api/faculty/groups/${user.uid}`)
+    fetch(`${API_BASE_URL}/api/faculty/groups/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok' && data.groups) {
