@@ -88,8 +88,12 @@ export default function LoginInterface({ onLoginSuccess }) {
         })
         const data = await res.json()
         if (data.status === 'ok') {
-          setStatusMsg({ type: 'success', text: `Welcome back, ${data.user.name}! Role: ${data.user.role}` })
-          setPassword('')
+          // Call onLoginSuccess immediately without setting any other state first.
+          // In React 18 production builds, state updates inside async functions are automatically
+          // batched. If we call setStatusMsg/setPassword before onLoginSuccess, the batched
+          // re-render of LoginInterface can interfere with App.jsx's currentUser update,
+          // leaving the user stuck on the login page. Since we navigate away immediately,
+          // there's no need for a success message here.
           if (onLoginSuccess) {
             const userObj = {
               ...data.user,
