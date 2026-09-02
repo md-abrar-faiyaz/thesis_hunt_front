@@ -58,7 +58,7 @@ export default function StudentInterface({ user, onLogout }) {
 
   useEffect(() => {
     fetchUnreadCount()
-    const timer = setInterval(fetchUnreadCount, 10000)
+    const timer = setInterval(fetchUnreadCount, 3000)
     return () => clearInterval(timer)
   }, [user])
 
@@ -107,6 +107,7 @@ export default function StudentInterface({ user, onLogout }) {
             key={`group-${refreshKey}`}
             user={user}
             onNavigateToThesisGroups={() => setActiveTab('thesis_group')}
+            onNavigateToSearchFaculties={() => setActiveTab('search_faculties')}
           />
         )
       case 'search_students':
@@ -123,6 +124,7 @@ export default function StudentInterface({ user, onLogout }) {
           <SearchFacultiesSection
             key={`faculties-${searchPreFill.key}-${refreshKey}`}
             initialQuery={searchPreFill.targetTab === 'search_faculties' ? searchPreFill.query : ''}
+            user={user}
           />
         )
       case 'blogposts':

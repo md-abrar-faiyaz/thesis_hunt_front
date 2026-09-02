@@ -26,7 +26,14 @@ export default function FacultyTasksSection({ user }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'ok') {
-          setTasks(data.tasks || [])
+          // Sort tasks by thesis group (group_id ASC) and assigned time (task_id DESC, latest on top)
+          const sortedTasks = [...(data.tasks || [])].sort((a, b) => {
+            if (a.group_id !== b.group_id) {
+              return a.group_id - b.group_id
+            }
+            return b.task_id - a.task_id
+          })
+          setTasks(sortedTasks)
         } else {
           setError(data.message || 'Failed to load tasks.')
         }
@@ -147,55 +154,89 @@ export default function FacultyTasksSection({ user }) {
           No tasks assigned in your supervised thesis groups yet. Click "+ Assign Task To Student" above.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {tasks.map((t) => {
-            const isCompleted = t.status === 'Completed'
-            const isInProgress = t.status === 'In Progress'
-
-            return (
-              <div
-                key={t.task_id}
-                className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="px-3 py-1 bg-sky-100 text-sky-950 font-bold rounded-full text-xs">
-                      Task #{t.task_id} • Group #{t.group_id}
-                    </span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-extrabold ${
-                        isCompleted
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : isInProgress
-                          ? 'bg-blue-100 text-blue-900'
-                          : 'bg-amber-100 text-amber-900'
-                      }`}
-                    >
-                      Status: {t.status}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 text-base">{t.thesis_title}</h3>
-                    <p className="text-xs font-semibold text-blue-950 mt-1">
-                      Assigned To: <span className="text-slate-900 font-bold">{t.student_name}</span> ({t.student_email})
-                    </p>
-                  </div>
-
-                  <p className="text-xs text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100 leading-relaxed">
-                    {t.task_description}
-                  </p>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                  <span className="text-slate-500 font-bold">Deadline:</span>
-                  <span className="font-extrabold text-rose-900 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">
-                    {t.formatted_deadline || t.deadline || 'No deadline set'}
+        <div className="space-y-10">
+          {Object.values(
+            tasks.reduce((acc, t) => {
+              const gid = t.group_id
+              if (!acc[gid]) {
+                acc[gid] = {
+                  group_id: gid,
+                  thesis_title: t.thesis_title,
+                  taskList: []
+                }
+              }
+              acc[gid].taskList.push(t)
+              return acc
+            }, {})
+          ).map((group) => (
+            <div key={group.group_id} className="space-y-4">
+              {/* Group Header Banner */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-sm gap-2">
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-blue-600 text-white font-extrabold text-xs rounded-xl">
+                    Group #{group.group_id}
                   </span>
+                  <h3 className="font-extrabold text-sm text-slate-100">
+                    {group.thesis_title ? group.thesis_title : `Thesis Group #${group.group_id}`}
+                  </h3>
                 </div>
+                <span className="text-xs font-bold text-slate-300 bg-slate-800 px-3 py-1 rounded-xl border border-slate-700">
+                  {group.taskList.length} {group.taskList.length === 1 ? 'Task' : 'Tasks'}
+                </span>
               </div>
-            )
-          })}
+
+              {/* Tasks Grid for this Group */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {group.taskList.map((t) => {
+                  const isCompleted = t.status === 'Completed'
+                  const isInProgress = t.status === 'In Progress'
+
+                  return (
+                    <div
+                      key={t.task_id}
+                      className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="px-3 py-1 bg-sky-100 text-sky-950 font-bold rounded-full text-xs">
+                            Task #{t.task_id}
+                          </span>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-extrabold ${
+                              isCompleted
+                                ? 'bg-emerald-100 text-emerald-900'
+                                : isInProgress
+                                ? 'bg-blue-100 text-blue-900'
+                                : 'bg-amber-100 text-amber-900'
+                            }`}
+                          >
+                            Status: {t.status}
+                          </span>
+                        </div>
+
+                        <div>
+                          <p className="text-xs font-semibold text-blue-950 mt-1">
+                            Assigned To: <span className="text-slate-900 font-bold">{t.student_name}</span> ({t.student_email})
+                          </p>
+                        </div>
+
+                        <p className="text-xs text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100 leading-relaxed">
+                          {t.task_description}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span className="text-slate-500 font-bold">Deadline:</span>
+                        <span className="font-extrabold text-rose-900 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">
+                          {t.formatted_deadline || t.deadline || 'No deadline set'}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

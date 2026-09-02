@@ -38,7 +38,7 @@ export default function FacultyInterface({ user, onLogout }) {
 
   useEffect(() => {
     fetchInboxBadge()
-    const timer = setInterval(fetchInboxBadge, 10000)
+    const timer = setInterval(fetchInboxBadge, 3000)
     return () => clearInterval(timer)
   }, [user])
 

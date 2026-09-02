@@ -85,7 +85,7 @@ export default function InboxSection({ user, initialTargetPartner }) {
       if (selectedPartner && selectedPartner.partner_id) {
         fetchMessages(selectedPartner.partner_id, true)
       }
-    }, 4000)
+    }, 3000)
     return () => clearInterval(timer)
   }, [fetchConversations, fetchMessages, selectedPartner])
 
@@ -100,9 +100,16 @@ export default function InboxSection({ user, initialTargetPartner }) {
     }
   }, [initialTargetPartner, fetchMessages])
 
+  const lastMsgIdRef = useRef(null)
+
   useEffect(() => {
-    if (selectedPartner) {
-      scrollToBottom()
+    if (selectedPartner && messages && messages.length > 0) {
+      const lastMsg = messages[messages.length - 1]
+      const lastId = lastMsg.message_id || lastMsg.temp_id || lastMsg.timestamp || lastMsg.message_text
+      if (lastMsgIdRef.current !== lastId) {
+        lastMsgIdRef.current = lastId
+        scrollToBottom()
+      }
     }
   }, [messages, selectedPartner])
 
@@ -241,6 +248,17 @@ export default function InboxSection({ user, initialTargetPartner }) {
             <h3 className="text-sm font-bold uppercase tracking-wider text-black">
               All Conversations ({conversations.length})
             </h3>
+            <button
+              type="button"
+              onClick={() => fetchConversations(false)}
+              className="px-3.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
+              title="Refresh inbox"
+            >
+              <svg className="w-3.5 h-3.5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Refresh</span>
+            </button>
           </div>
 
           {error ? (
@@ -353,6 +371,18 @@ export default function InboxSection({ user, initialTargetPartner }) {
                 )}
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => fetchMessages(selectedPartner.partner_id, false)}
+              className="px-3.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
+              title="Refresh conversation"
+            >
+              <svg className="w-3.5 h-3.5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Refresh</span>
+            </button>
           </div>
 
           {/* Messages Feed Container (Ascending Chronological Order) */}

@@ -31,7 +31,15 @@ const isWithinTwoWeeks = (dateStr) => {
   return meetingDate >= today && meetingDate <= twoWeeksLimit
 }
 
-export default function MeetingsSection({ user }) {
+export default function MeetingsSection({ user, isThesisDone: isThesisDoneProp }) {
+  const isThesisDone = Boolean(
+    isThesisDoneProp ||
+    user?.has_done_thesis === true ||
+    user?.has_done_thesis === 1 ||
+    user?.has_done_thesis === 'true' ||
+    user?.has_done_thesis === '1'
+  )
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [hasGroup, setHasGroup] = useState(false)
@@ -211,7 +219,7 @@ export default function MeetingsSection({ user }) {
           </p>
         </div>
 
-        {hasGroup && (
+        {(hasGroup || isThesisDone) && (
           <button
             type="button"
             onClick={() => {
@@ -365,7 +373,7 @@ export default function MeetingsSection({ user }) {
               )}
             </div>
 
-            {!hasGroup ? (
+            {!hasGroup && !isThesisDone ? (
               <div className="bg-white border border-slate-200 rounded-3xl p-8 text-center max-w-xl mx-auto shadow-sm space-y-4 my-8">
                 <div className="w-16 h-16 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold">
                   📅

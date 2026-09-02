@@ -11,7 +11,7 @@ const PREDEFINED_SLOTS = [
   '05:00 PM - 06:30 PM'
 ]
 
-export default function GroupChannelSection({ user, onNavigateToThesisGroups }) {
+export default function GroupChannelSection({ user, onNavigateToThesisGroups, onNavigateToSearchFaculties }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [groupData, setGroupData] = useState(null)
@@ -198,13 +198,24 @@ export default function GroupChannelSection({ user, onNavigateToThesisGroups }) 
       })
   }, [user])
 
+  const lastMsgIdRef = useRef(null)
+
   useEffect(() => {
     fetchGroupChannel()
+    const timer = setInterval(() => {
+      fetchGroupChannel(true)
+    }, 3000)
+    return () => clearInterval(timer)
   }, [fetchGroupChannel])
 
   useEffect(() => {
-    if (groupData && groupData.messages) {
-      scrollToBottom()
+    if (groupData && groupData.messages && groupData.messages.length > 0) {
+      const lastMsg = groupData.messages[groupData.messages.length - 1]
+      const lastId = lastMsg.message_id || lastMsg.temp_id || lastMsg.content
+      if (lastMsgIdRef.current !== lastId) {
+        lastMsgIdRef.current = lastId
+        scrollToBottom()
+      }
     }
   }, [groupData])
 
@@ -693,9 +704,21 @@ export default function GroupChannelSection({ user, onNavigateToThesisGroups }) 
 
               {/* Faculty Supervision */}
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-purple-950">
-                  Supervision Team
-                </h4>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-purple-950">
+                    Supervision Team
+                  </h4>
+                  {onNavigateToSearchFaculties && (
+                    <button
+                      type="button"
+                      onClick={onNavigateToSearchFaculties}
+                      className="text-[11px] font-extrabold text-blue-900 hover:text-blue-950 bg-sky-100 hover:bg-sky-200 border border-sky-300 px-2.5 py-1 rounded-lg transition-all flex items-center space-x-1 cursor-pointer"
+                    >
+                      <span>Find Supervisor / Co-Supervisor</span>
+                      <span>↗</span>
+                    </button>
+                  )}
+                </div>
 
                 {!groupInfo?.supervisors || groupInfo.supervisors.length === 0 ? (
                   <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
@@ -742,6 +765,18 @@ export default function GroupChannelSection({ user, onNavigateToThesisGroups }) 
                   <h3 className="text-base font-extrabold text-black">Group Channel</h3>
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => fetchGroupChannel(false)}
+                className="px-3.5 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center space-x-1.5 shadow-2xs transition-all cursor-pointer"
+                title="Refresh channel messages"
+              >
+                <svg className="w-3.5 h-3.5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Refresh</span>
+              </button>
             </div>
 
             {/* Messages Feed */}

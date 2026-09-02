@@ -47,7 +47,7 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
 
   useEffect(() => {
     fetchUnreadCount()
-    const timer = setInterval(fetchUnreadCount, 10000)
+    const timer = setInterval(fetchUnreadCount, 3000)
     return () => clearInterval(timer)
   }, [user])
 
@@ -79,7 +79,7 @@ export default function ThesisDoneStudentInterface({ user, onLogout }) {
       case 'inbox':
         return <InboxSection key={`inbox-${refreshKey}`} user={user} initialTargetPartner={inboxTarget} />
       case 'meetings':
-        return <MeetingsSection key={`meetings-${refreshKey}`} user={user} />
+        return <MeetingsSection key={`meetings-${refreshKey}`} user={user} isThesisDone={true} />
       case 'blogposts':
         return (
           <BlogpostsSection

@@ -19,11 +19,11 @@ export default function FacultyInboxSection({ user }) {
   // Group Details Inspection Modal
   const [inspectGroupModal, setInspectGroupModal] = useState(null)
 
-  const fetchInbox = () => {
+  const fetchInbox = (silent = false) => {
     if (!user) return
     const userId = user.uid || user.UID || user.faculty_id
     if (!userId) return
-    setLoading(true)
+    if (!silent) setLoading(true)
     fetch(`${API_BASE_URL}/api/faculty/inbox/${userId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -33,15 +33,23 @@ export default function FacultyInboxSection({ user }) {
             meeting_requests: data.meeting_requests || []
           })
         } else {
-          setError(data.message || 'Failed to load inbox requests.')
+          if (!silent) setError(data.message || 'Failed to load inbox requests.')
         }
       })
-      .catch(() => setError('Failed to connect to inbox server.'))
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (!silent) setError('Failed to connect to inbox server.')
+      })
+      .finally(() => {
+        if (!silent) setLoading(false)
+      })
   }
 
   useEffect(() => {
     fetchInbox()
+    const timer = setInterval(() => {
+      fetchInbox(true)
+    }, 3000)
+    return () => clearInterval(timer)
   }, [user?.uid])
 
   const openResponseModal = (reqItem, action) => {
@@ -142,13 +150,24 @@ export default function FacultyInboxSection({ user }) {
           </p>
         </div>
 
-        <div className="flex gap-3 text-xs font-bold">
+        <div className="flex flex-wrap items-center gap-3 text-xs font-bold">
           <span className="px-3 py-1.5 bg-blue-100 text-blue-900 rounded-xl border border-blue-200">
             {pendingSupervisorReqs.length} Supervision Requests
           </span>
           <span className="px-3 py-1.5 bg-amber-100 text-amber-900 rounded-xl border border-amber-200">
             {pendingMeetingReqs.length} Meeting Requests
           </span>
+          <button
+            type="button"
+            onClick={() => fetchInbox(false)}
+            className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 flex items-center space-x-1.5 transition-all cursor-pointer"
+            title="Refresh inbox & requests"
+          >
+            <svg className="w-3.5 h-3.5 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 
